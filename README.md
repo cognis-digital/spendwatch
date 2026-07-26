@@ -1,343 +1,245 @@
-<a name="top"></a>
-<div align="center">
-
-<img src="https://capsule-render.vercel.app/api?type=rect&color=0:6b46c1,100:2b6cb0&height=120&section=header&text=TOKENMETER&fontSize=48&fontColor=ffffff&fontAlignY=58" width="100%" alt="TOKENMETER"/>
-
-# TOKENMETER
-
-### Token and cost counter / budgeter for LLM apps, CI-ready
-
-<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=18&duration=3500&pause=1000&color=6B46C1&center=true&vCenter=true&width=720&lines=Token+and+cost+counter++budgeter+for+LLM+apps+CIready;Self-hostable+%C2%B7+MCP-native+%C2%B7+CI-ready+%C2%B7+polyglot" width="720"/>
-
-[![PyPI](https://img.shields.io/pypi/v/cognis-tokenmeter.svg?color=6b46c1)](https://pypi.org/project/cognis-tokenmeter/) [![CI](https://github.com/cognis-digital/tokenmeter/actions/workflows/ci.yml/badge.svg)](https://github.com/cognis-digital/tokenmeter/actions) [![License: COCL 1.0](https://img.shields.io/badge/License-COCL%201.0-2b6cb0.svg)](LICENSE) [![Suite](https://img.shields.io/badge/Cognis-Neural%20Suite-6b46c1.svg)](https://github.com/cognis-digital)
-
-*Developer Tools — fast, single-purpose, CI- and agent-friendly.*
-
-</div>
-
-```bash
-pip install cognis-tokenmeter
-tokenmeter count -f prompt.txt -m claude-sonnet -o 500   # tokens + cost in ms
-```
-
-
-<!-- cognis:example:start -->
-
-## Watch the walkthrough
-
-A full narrated tour — setup, the tool in action, and every demo scenario:
-
-[![Watch the tokenmeter walkthrough](media/walkthrough-thumb.png)](https://github.com/cognis-digital/tokenmeter/releases/download/walkthrough-v1/walkthrough.mp4)
-
-▶ **[Watch the walkthrough (MP4)](https://github.com/cognis-digital/tokenmeter/releases/download/walkthrough-v1/walkthrough.mp4)**
-
-## 🔎 Example output
-
-Real, reproducible output from the tool — runs offline:
-
-```console
-$ tokenmeter-emit --version
-tokenmeter 0.1.0
-```
-
-```console
-$ tokenmeter-emit --help
-usage: tokenmeter [-h] [--version] [--format {table,json,csv}]
-                  {count,budget,models,batch,compare} ...
-
-Token and cost counter / budgeter for LLM apps (CI-ready).
-
-positional arguments:
-  {count,budget,models,batch,compare}
-    count               count tokens and estimate cost
-    budget              fail (exit 1) if over a cost/token budget
-    models              list known models and pricing
-    batch               estimate many files and roll up
-    compare             estimate one workload across all models, cheapest
-                        first
-
-options:
-  -h, --help            show this help message and exit
-  --version             show program's version number and exit
-  --format {table,json,csv}
-                        output format (default: table)
-```
-
-> Blocks above are real `tokenmeter` output — reproduce them from a clone.
-
-**Sample result format** _(illustrative values — run on your own data for real findings):_
-
-```
-{
-"findings": [
-    {
-        "id": "1234567890",
-        "title": "Suspicious Network Traffic",
-        "description": "Potential malicious activity detected on network interface 192.168.1.100",
-        "created_by": "John Doe",
-        "created_at": "2023-02-15T14:30:00Z"
-    },
-    {
-        "id": "2345678901",
-        "title": "Unusual File Access",
-        "description": "File access pattern detected on file /path/to/suspicious/file.txt",
-        "created_by": "Jane Smith",
-        "created_at": "2023-02-16T10:15:00Z"
-    }
-]
-}
-```
-
-<!-- cognis:example:end -->
-
-## Usage — step by step
-
-1. **Install** (Python 3.9+):
-
-   ```bash
-   pip install tokenmeter
-   ```
-
-2. **Count tokens and estimate cost** for some text or a file, against a pricing model:
-
-   ```bash
-   tokenmeter count -f prompt.txt -m claude-sonnet --output-tokens 500
-   tokenmeter count -t "hello world" -m claude-sonnet
-   ```
-
-3. **List known models** and their pricing:
-
-   ```bash
-   tokenmeter models --format json | jq .
-   ```
-
-4. **Batch-estimate** many files and roll them up:
-
-   ```bash
-   tokenmeter batch prompts/*.txt -m claude-sonnet
-   ```
-
-5. **Gate a budget in CI.** `budget` exits `1` when the cost/token cap is exceeded:
-
-   ```bash
-   tokenmeter budget -f prompt.txt -m claude-sonnet --max-cost 0.05 || echo "Over budget"
-   ```
-
-6. **Compare every model for one workload**, cheapest first, and export it:
-
-   ```bash
-   tokenmeter compare -f prompt.txt -o 500                 # ranked table
-   tokenmeter compare -f prompt.txt -o 500 --format csv    # for a spreadsheet
-   tokenmeter models  --format csv                         # the whole price book
-   ```
-
-   `count`, `models`, `batch`, and `compare` all support `--format csv` for
-   FinOps spreadsheets and dashboards, alongside `table` and `json`.
-
-## Demos
-
-Five runnable scenarios in [`demos/`](demos/) drive the **real** `tokenmeter`
-API against bundled, offline fixtures — no network, no API keys, no heavy deps.
-Each is narrated, audience-specific, and exits 0, so they double as smoke tests.
-Full write-up: [`docs/DEMOS.md`](docs/DEMOS.md).
-
-```bash
-python demos/run_all.py                  # all five, end to end (exit 0)
-python demos/03_ci_budget_gate.py        # or just one
-```
-
-```mermaid
-flowchart LR
-    fx["bundled fixtures<br/>tokenmeter/demos/*"] --> api["tokenmeter.core<br/>estimate · check_budget · compare · aggregate"]
-    api --> d1["01 AI app prompt cost"]
-    api --> d2["02 FinOps model selection"]
-    api --> d3["03 CI budget gate"]
-    api --> d4["04 prompt-library rollup"]
-    api --> d5["05 RAG context budget"]
-```
-
-| Demo | Audience | Scenario |
-|---|---|---|
-| [`01_ai_app_prompt_cost`](demos/01_ai_app_prompt_cost.py) | AI app devs | What one call costs across models, projected to daily volume |
-| [`02_finops_model_selection`](demos/02_finops_model_selection.py) | FinOps / platform | Rank one workload cheapest-first; forecast the day-rate |
-| [`03_ci_budget_gate`](demos/03_ci_budget_gate.py) | CI / release eng | Cost + context-window gates that fail the build like a linter |
-| [`04_eng_manager_prompt_library`](demos/04_eng_manager_prompt_library.py) | Eng managers | Roll up a whole prompt library into one number |
-| [`05_rag_context_budget`](demos/05_rag_context_budget.py) | RAG / context eng | Size the assembled RAG prompt; quantify the few-shot tax |
-
-### Worked CLI demos
-
-Each folder under [`tokenmeter/demos/`](tokenmeter/demos) is a real-use-case
-scenario with an input file in the tool's real input format, a `SCENARIO.md`
-explaining where the data came from and how to act, and exact CLI commands:
-
-| Demo | Scenario |
-|---|---|
-| [`01-basic`](tokenmeter/demos/01-basic) | Budget an LLM system prompt in CI |
-| [`02-rag-context`](tokenmeter/demos/02-rag-context) | Size an assembled RAG prompt before sending |
-| [`03-model-selection`](tokenmeter/demos/03-model-selection) | Pick the cheapest model with `compare` |
-| [`04-batch-prompt-library`](tokenmeter/demos/04-batch-prompt-library) | Roll up a whole prompt library with `batch` |
-| [`05-chat-transcript`](tokenmeter/demos/05-chat-transcript) | Cost of continuing a multi-turn chat |
-| [`06-context-window-guard`](tokenmeter/demos/06-context-window-guard) | Catch a context-window overflow before the API does |
-| [`07-fewshot-vs-zeroshot`](tokenmeter/demos/07-fewshot-vs-zeroshot) | Quantify the recurring cost of few-shot examples |
-| [`08-csv-finops`](tokenmeter/demos/08-csv-finops) | Export per-step agent cost as CSV for finance |
-| [`09-stdin-pipeline`](tokenmeter/demos/09-stdin-pipeline) | Measure anything piped on stdin (e.g. a `git diff`) |
-
-
-## Contents
-
-- [Why tokenmeter?](#why) · [Features](#features) · [Quick start](#quick-start) · [Example](#example) · [Architecture](#architecture) · [AI stack](#ai-stack) · [How it compares](#how-it-compares) · [Integrations](#integrations) · [Install anywhere](#install-anywhere) · [Related](#related) · [Contributing](#contributing)
-
-<a name="why"></a>
-## Why tokenmeter?
-
-AI cost control
-
-`tokenmeter` is single-purpose, scriptable, and self-hostable: point it at a target, get prioritized results in the format your workflow already speaks (table · JSON · SARIF), gate CI on it, and let agents drive it over MCP.
-
-<div align="right"><a href="#top">↑ back to top</a></div>
-
-<a name="features"></a>
-## Features
-
-- ✅ Add Model
-- ✅ Get Pricing
-- ✅ List Models
-- ✅ Count Tokens
-- ✅ Estimate
-- ✅ Check Budget
-- ✅ Aggregate
-- ✅ Compare models (rank one workload by cost, cheapest first)
-- ✅ Output as table · JSON · CSV (CSV for FinOps spreadsheets)
-- ✅ Runs on Linux/macOS/Windows · Docker · devcontainer
-- ✅ Ports in Python, JavaScript, Go, and Rust (`ports/`)
-
-<div align="right"><a href="#top">↑ back to top</a></div>
-
-<a name="quick-start"></a>
-## Quick start
-
-```bash
-pip install cognis-tokenmeter
-tokenmeter --version
-tokenmeter count -t "hello world" -m claude-sonnet      # count + cost
-tokenmeter count -f prompt.txt -m gpt-4o --format json  # machine-readable
-tokenmeter budget -f prompt.txt -m claude-opus --max-cost 0.01   # CI gate (exit 1)
-tokenmeter compare -f prompt.txt -o 500                 # rank models by cost
-```
-
-<div align="right"><a href="#top">↑ back to top</a></div>
-
-<a name="example"></a>
-## Example
-
-```text
-$ tokenmeter compare -f prompt.txt -o 500
-model          in_tok  out_tok  total_cost_usd  ctx_used_%
-gpt-4o-mini    476     500      0.000371        0.76
-claude-haiku   476     500      0.002381        0.49
-gpt-4o         476     500      0.006190        0.76
-claude-sonnet  476     500      0.008928        0.49
-claude-opus    476     500      0.044640        0.49
-```
-
-<div align="right"><a href="#top">↑ back to top</a></div>
-
-<a name="architecture"></a>
-## Architecture
-
-```mermaid
-flowchart LR
-  IN[input] --> P[tokenmeter<br/>analyze + score]
-  P --> OUT[report]
-```
-
-<div align="right"><a href="#top">↑ back to top</a></div>
-
-<a name="ai-stack"></a>
-## Use it from any AI stack
-
-`tokenmeter` is interoperable with every popular way of using AI:
-
-- **MCP server** — `tokenmeter mcp` (Claude Desktop, Cursor, Cognis.Studio, [uncensored-fleet](https://github.com/cognis-digital/uncensored-fleet))
-- **OpenAI-compatible / JSON** — pipe `tokenmeter scan . --format json` into any agent or LLM
-- **LangChain · CrewAI · AutoGen · LlamaIndex** — wrap the CLI/JSON as a tool in one line
-- **CI / scripts** — exit codes + SARIF for non-AI pipelines
-
-<div align="right"><a href="#top">↑ back to top</a></div>
-
-<a name="how-it-compares"></a>
-## How it compares
-
-| | **Cognis tokenmeter** | tiktoken |
-|---|:---:|:---:|
-| Self-hostable, no account | ✅ | varies |
-| Single command, zero config | ✅ | ⚠️ |
-| JSON + SARIF for CI | ✅ | varies |
-| MCP-native (AI agents) | ✅ | ❌ |
-| Polyglot ports (JS/Go/Rust) | ✅ | ❌ |
-| Open license | ✅ COCL | varies |
-
-*Built in the spirit of **tiktoken**, re-framed the Cognis way. Missing a credit? Open a PR.*
-
-<div align="right"><a href="#top">↑ back to top</a></div>
-
-<a name="integrations"></a>
-## Integrations
-
-Pipes into your stack: **SARIF** for code-scanning, **JSON** for anything, an **MCP server** (`tokenmeter mcp`) for AI agents, and a webhook forwarder for SIEM/Slack/Jira. See [`docs/INTEGRATIONS.md`](docs/INTEGRATIONS.md).
-
-<div align="right"><a href="#top">↑ back to top</a></div>
-
-<a name="install-anywhere"></a>
-## Install — every way, every platform
-
-```bash
-pip install "git+https://github.com/cognis-digital/tokenmeter.git"    # pip (works today)
-pipx install "git+https://github.com/cognis-digital/tokenmeter.git"   # isolated CLI
-uv tool install "git+https://github.com/cognis-digital/tokenmeter.git" # uv
-pip install cognis-tokenmeter                                          # PyPI (when published)
-docker run --rm ghcr.io/cognis-digital/tokenmeter:latest --help        # Docker
-brew install cognis-digital/tap/tokenmeter                             # Homebrew tap
-curl -fsSL https://raw.githubusercontent.com/cognis-digital/tokenmeter/main/install.sh | sh
-```
-
-| Linux | macOS | Windows | Docker | Cloud |
-|---|---|---|---|---|
-| `scripts/setup-linux.sh` | `scripts/setup-macos.sh` | `scripts/setup-windows.ps1` | `docker run ghcr.io/cognis-digital/tokenmeter` | [DEPLOY.md](docs/DEPLOY.md) (AWS/Azure/GCP/k8s) |
-
-<div align="right"><a href="#top">↑ back to top</a></div>
-
-<a name="related"></a>
-## Related Cognis tools
-
-- [`mcpforge`](https://github.com/cognis-digital/mcpforge) — Scaffold, test, and publish MCP servers in minutes
-- [`promptlint`](https://github.com/cognis-digital/promptlint) — Lint, version, and test prompts as code with a CI gate
-- [`envdoctor`](https://github.com/cognis-digital/envdoctor) — .env validator, secret-presence and config-drift checker
-- [`apidiff`](https://github.com/cognis-digital/apidiff) — Breaking-change detector for OpenAPI / GraphQL across commits
-- [`codeglance`](https://github.com/cognis-digital/codeglance) — Repo onboarding map — architecture + hotspots for humans and agents
-- [`flakefinder`](https://github.com/cognis-digital/flakefinder) — Flaky-test detector from CI history with quarantine suggestions
-
-**Explore the suite →** [🗂️ all 170+ tools](https://github.com/cognis-digital/cognis-neural-suite) · [⭐ awesome-cognis](https://github.com/cognis-digital/awesome-cognis) · [🔗 cognis-sources](https://github.com/cognis-digital/cognis-sources) · [🤖 uncensored-fleet](https://github.com/cognis-digital/uncensored-fleet) · [🧠 engram](https://github.com/cognis-digital/engram)
-
-<div align="right"><a href="#top">↑ back to top</a></div>
-
-<a name="contributing"></a>
-## Contributing
-
-PRs, new rules, and demo scenarios are welcome under the collaboration-pull model — see [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md).
-
-> ### ⭐ If `tokenmeter` saved you time, **star it** — it genuinely helps others find it.
-
-## Interoperability
-
-`{}` composes with the 300+ tool Cognis suite — JSON in/out and a shared
-OpenAI-compatible `/v1` backbone. See **[INTEROP.md](INTEROP.md)** for the
-suite map, composition patterns, and reference stacks.
-
-## License
-
-Source-available under the **Cognis Open Collaboration License (COCL) v1.0** — free for personal, internal-evaluation, research, and educational use; **commercial / production use requires a license** (licensing@cognis.digital). See [LICENSE](LICENSE).
+# spendwatch
+
+**One place to watch LLM usage, rate limits, and spend across every provider your
+stack touches** — cloud and local — with budget guards, a live dashboard,
+machine-readable exports, and an MCP endpoint an agent can query *before* it
+spends.
+
+A Cognis Digital tool. **Zero third-party runtime dependencies** — Python 3.11+
+standard library only. The TUI uses `curses` (with a plain-text fallback), HTTP
+uses `urllib`/`http.server`, and Prometheus metrics are hand-emitted in the text
+exposition format. `pytest` is required only to run the test suite.
 
 ---
 
-<div align="center"><sub><b><a href="https://cognis.digital">Cognis Digital</a></b> · one of 170+ tools in the <a href="https://github.com/cognis-digital/cognis-neural-suite">Cognis Neural Suite</a> · <i>Making Tomorrow Better Today</i></sub></div>
+## Why spendwatch
+
+Most usage meters watch a *single* provider, often scraped from a browser
+session. But every serious agent stack spans multiple clouds **plus** local
+models, and it needs two things a single-provider widget can't give you:
+
+1. **Budget guards** that actually stop a runaway run (CI-friendly exit codes).
+2. **An endpoint an agent can ask** — "what's my remaining budget?" — before it
+   kicks off an expensive job.
+
+spendwatch unifies all of it: cloud and self-hosted spend in one normalized
+view, guarded, forecast, and exportable to the tools you already run.
+
+## Features
+
+- **Multi-provider ingest, one schema.** Adapters for Anthropic, OpenAI,
+  OpenRouter, and local runtimes (Ollama / LM Studio) normalize wildly different
+  native payloads into a single `UsageRecord`. Cloud usage/cost APIs and local
+  token logs live side by side.
+- **Live limits & session tracking.** Current session (rolling window), daily,
+  weekly, per-model usage against configured limits, spend beyond an included
+  plan allowance ("extra usage"), and remaining balance — all derived from
+  ingested records, refreshed on demand.
+- **Budget guards.** Per-project / per-day / per-model / per-provider / global
+  caps, each with independent **warn** and **deny** thresholds. Evaluates to a
+  CI-friendly exit code: `0` ok, `0` (or `1` in `--strict` mode) on warn, `2` on
+  deny.
+- **Cost model.** Per-token pricing for input, output, cached, cache-write, and
+  hidden reasoning tokens, plus per-image and per-embedding rates. Ships an
+  editable JSON pricing table with deterministic model→rate resolution
+  (exact → longest-prefix → provider default → table default).
+- **Burn-rate forecasting.** Projects end-of-day and end-of-month spend from the
+  current burn rate and estimates when a cap will be hit.
+- **Outputs everywhere.** Live TUI dashboard, deterministic JSON, CSV (records
+  or grouped breakdowns), and a Prometheus metrics endpoint for existing
+  observability stacks.
+- **MCP server.** A tiny self-contained JSON-RPC/stdio server (no external MCP
+  SDK) exposing a `remaining_budget` tool an agent can call before a large job.
+- **Status-widget bridge.** Emits a tiny, flat JSON file any secondary-display
+  or stream-controller widget can poll — covering all providers at a glance.
+- **Offline-first.** Local providers need no keys, and every adapter runs in a
+  deterministic fixture mode so the whole pipeline is testable without touching a
+  paid API. The live HTTP path is a thin, isolated layer.
+
+## Install
+
+```bash
+pip install -e .
+# or, for development (adds pytest)
+pip install -e ".[dev]"
+```
+
+Runs from a checkout with no install, too:
+
+```bash
+python -m spendwatch --help
+```
+
+## Quick start
+
+```bash
+# Full report as JSON (uses the bundled demo config + fixtures)
+python -m spendwatch report --config fixtures/demo_config.json
+
+# Text dashboard
+python -m spendwatch report --config fixtures/demo_config.json --table
+
+# Evaluate budget guards; exit code is non-zero on deny (great for CI)
+python -m spendwatch budget --config fixtures/demo_config.json
+echo "exit code: $?"
+
+# Export for other tools
+python -m spendwatch export -c fixtures/demo_config.json --format csv
+python -m spendwatch export -c fixtures/demo_config.json --format prometheus
+
+# Emit the status-widget bridge JSON
+python -m spendwatch widget -c fixtures/demo_config.json --out status.json
+
+# Normalize a single provider payload to records
+python -m spendwatch ingest --provider anthropic --fixture fixtures/anthropic_usage.json
+```
+
+## Configuration
+
+A config is a plain JSON object. Fixture paths resolve relative to the config
+file's directory.
+
+```json
+{
+  "prefer_reported": false,
+  "sources": [
+    {"provider": "anthropic",  "fixture": "anthropic_usage.json"},
+    {"provider": "openai",     "fixture": "openai_usage.json"},
+    {"provider": "openrouter", "fixture": "openrouter_usage.json"},
+    {"provider": "local",      "fixture": "local_usage.json"}
+  ],
+  "limits": {
+    "plan_allowance_usd": 100.0,
+    "weekly_limit_usd": 50.0,
+    "daily_limit_usd": 20.0,
+    "session_window_minutes": 300,
+    "per_model_usd": {"claude-opus-4-20250514": 5.0}
+  },
+  "budget": {
+    "strict_warn": false,
+    "rules": [
+      {"scope": "global",   "limit_usd": 25.0, "warn_ratio": 0.8, "deny_ratio": 1.0, "period": "all"},
+      {"scope": "project",  "key": "proj_alpha", "limit_usd": 10.0, "period": "day"},
+      {"scope": "model",    "limit_usd": 8.0, "period": "all"},
+      {"scope": "provider", "key": "anthropic", "limit_usd": 15.0}
+    ]
+  }
+}
+```
+
+A `source` may provide a `fixture` (path), inline `records` (native rows), or a
+full `payload` (native envelope).
+
+### Budget rules
+
+| Field         | Meaning                                                             |
+|---------------|--------------------------------------------------------------------|
+| `scope`       | `global`, `project`, `model`, `provider`, or `day`                  |
+| `key`         | The project/model/provider a rule targets; omit to check **each**  |
+| `limit_usd`   | The cap                                                             |
+| `warn_ratio`  | Fraction of the cap that triggers a **warn** (default `0.8`)        |
+| `deny_ratio`  | Fraction of the cap that triggers a **deny** (default `1.0`)        |
+| `period`      | `all`, `day`, or `month` (relative to evaluation time)             |
+
+**Exit-code contract:** `0` = ok (and warn, unless `strict_warn`), `1` = warn in
+strict mode, `2` = deny. Drop `spendwatch budget` into a CI step to hard-stop a
+job that would blow the budget.
+
+## Pricing table
+
+`spendwatch/pricing_table.json` is fully editable. Rates are USD per 1,000,000
+tokens (except `image`, which is USD per image). Resolution is deterministic:
+
+```
+exact model id  ->  longest-prefix model id  ->  provider default  ->  table default
+```
+
+Inspect resolution:
+
+```bash
+python -m spendwatch pricing --model gpt-4o-2024-08-06 --provider openai
+```
+
+> The bundled rates are reasonable starting points, not a live price feed —
+> spendwatch never phones home. Edit the table to match your contracts.
+
+## MCP: `remaining_budget`
+
+Run the stdio MCP server:
+
+```bash
+python -m spendwatch mcp --config fixtures/demo_config.json
+```
+
+It speaks newline-delimited JSON-RPC 2.0 and implements `initialize`,
+`tools/list`, and `tools/call`. The single tool, `remaining_budget`, returns
+spend so far (today/week/lifetime), remaining daily/weekly/plan balance, the
+tightest binding budget rule, an overall status, and a CI exit code — optionally
+scoped to a `project` or `provider`. The `isError` flag is set when status is
+`deny`, so an agent can refuse to start an expensive job.
+
+## Prometheus endpoint
+
+```bash
+python -m spendwatch metrics --config fixtures/demo_config.json --port 9109
+# then scrape http://127.0.0.1:9109/metrics
+```
+
+Also serves `/report` (JSON) and `/healthz`. Metrics rebuild per scrape so they
+stay live.
+
+## Programmatic use
+
+```python
+from spendwatch.config import load_and_build
+from spendwatch.report import build_report, remaining_budget
+
+ledger, pricing, guard, limits, prefer = load_and_build("fixtures/demo_config.json")
+
+report = build_report(ledger, pricing, guard=guard, limits=limits)
+print(report["summary"]["cost_usd"])
+
+rb = remaining_budget(ledger, pricing, guard=guard, limits=limits)
+print(rb["status"], rb["remaining_usd"])
+```
+
+## Project layout
+
+```
+spendwatch/
+  __init__.py          package exports
+  __main__.py          python -m spendwatch
+  cli.py               argparse CLI + console entry point
+  schema.py            UsageRecord — the one normalized schema
+  money.py             deterministic USD math (Decimal, ROUND_HALF_UP)
+  timeutil.py          timestamp normalization + period keys
+  pricing.py           cost model + resolution cascade
+  pricing_table.json   editable pricing table
+  ledger.py            record collection + aggregation
+  budget.py            budget rules, guards, thresholds, exit codes
+  forecast.py          burn-rate forecasting
+  session.py           session/limits tracking
+  report.py            canonical report + remaining_budget
+  config.py            config -> ledger/pricing/guard/limits
+  metrics_server.py    Prometheus HTTP endpoint (stdlib http.server)
+  providers/           anthropic, openai, openrouter, local adapters
+  outputs/             json, csv, prometheus, widget bridge, tui
+  mcp/                 self-contained JSON-RPC/stdio MCP server
+tests/                 comprehensive pytest suite
+fixtures/              sample provider payloads + demo config
+```
+
+## Tests
+
+```bash
+python -m pytest -q
+```
+
+The suite covers ingest normalization across all four providers, the cost model
+and pricing tiers, budget-guard thresholds and exit codes, forecast math, every
+output format, the MCP endpoint, the CLI, and edge cases (zero usage, missing
+fields, huge spend, currency rounding, cache/reasoning tokens).
+
+## License
+
+MIT — see [LICENSE](LICENSE).

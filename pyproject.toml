@@ -1,39 +1,45 @@
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
 
 [project]
-name = "cognis-tokenmeter"
-version = "0.1.1"
-description = "Token and cost counter / budgeter for LLM apps, CI-ready"
-authors = [{name = "Cognis Digital", email = "suite@cognis.digital"}]
-license = {text = "LicenseRef-COCL-1.0"}
-requires-python = ">=3.10"
+name = "spendwatch"
+version = "0.1.0"
+description = "Multi-provider LLM usage, cost, and limit meter with budget guards, an MCP endpoint, and CI-friendly exit codes."
 readme = "README.md"
-keywords = ["cognis-digital", "cognis-neural-suite", "devtools", "tokenmeter"]
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Cognis Digital" }]
+keywords = ["llm", "cost", "budget", "usage", "observability", "mcp", "prometheus", "cli"]
 classifiers = [
     "Development Status :: 4 - Beta",
-    "License :: Other/Proprietary License",
-    "Programming Language :: Python :: 3.10",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: System :: Monitoring",
+    "Topic :: Utilities",
 ]
+# Core has ZERO third-party runtime dependencies (stdlib only).
+dependencies = []
 
 [project.optional-dependencies]
-connect = ["cognis-connect @ git+https://github.com/cognis-digital/cognis-connect.git"]
-mcp = ["mcp>=1.0"]
-dev = ["pytest>=8.0"]
+dev = ["pytest>=7.0"]
+
+[project.scripts]
+spendwatch = "spendwatch.cli:main"
 
 [project.urls]
 Homepage = "https://cognis.digital"
-Repository = "https://github.com/cognis-digital/tokenmeter"
 
-[project.scripts]
-"tokenmeter-emit" = "tokenmeter.connect:emit_main"
-tokenmeter = "tokenmeter.cli:main"
+[tool.setuptools]
+packages = ["spendwatch", "spendwatch.providers", "spendwatch.outputs", "spendwatch.mcp"]
 
-[tool.hatch.build.targets.wheel]
-packages = ["tokenmeter"]
+[tool.setuptools.package-data]
+spendwatch = ["pricing_table.json"]
 
-[tool.hatch.metadata]
-allow-direct-references = true
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

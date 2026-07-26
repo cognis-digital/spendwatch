@@ -1,7 +1,0 @@
-Classify the sentiment of the customer review as POSITIVE, NEGATIVE, or
-NEUTRAL. Return only the single word.
-
-Review:
-{review}
-
-Sentiment:

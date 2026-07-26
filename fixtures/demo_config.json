@@ -1,0 +1,27 @@
+{
+  "prefer_reported": false,
+  "sources": [
+    {"provider": "anthropic", "fixture": "anthropic_usage.json"},
+    {"provider": "openai", "fixture": "openai_usage.json"},
+    {"provider": "openrouter", "fixture": "openrouter_usage.json"},
+    {"provider": "local", "fixture": "local_usage.json"}
+  ],
+  "limits": {
+    "plan_allowance_usd": 100.0,
+    "weekly_limit_usd": 50.0,
+    "daily_limit_usd": 20.0,
+    "session_window_minutes": 300,
+    "per_model_usd": {
+      "claude-opus-4-20250514": 5.0
+    }
+  },
+  "budget": {
+    "strict_warn": false,
+    "rules": [
+      {"scope": "global", "limit_usd": 25.0, "warn_ratio": 0.8, "deny_ratio": 1.0, "period": "all"},
+      {"scope": "project", "key": "proj_alpha", "limit_usd": 10.0, "warn_ratio": 0.75, "deny_ratio": 1.0, "period": "day"},
+      {"scope": "model", "limit_usd": 8.0, "warn_ratio": 0.8, "deny_ratio": 1.0, "period": "all"},
+      {"scope": "provider", "key": "anthropic", "limit_usd": 15.0, "period": "all"}
+    ]
+  }
+}

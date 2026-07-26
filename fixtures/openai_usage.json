@@ -1,0 +1,50 @@
+{
+  "data": [
+    {
+      "id": "cmpl_o1",
+      "model": "gpt-4o-2024-08-06",
+      "created": 1785492000,
+      "project": "proj_alpha",
+      "usage": {
+        "prompt_tokens": 9000,
+        "completion_tokens": 2500,
+        "prompt_tokens_details": {"cached_tokens": 4000},
+        "completion_tokens_details": {"reasoning_tokens": 0}
+      }
+    },
+    {
+      "id": "cmpl_o2",
+      "model": "o3-mini",
+      "created": 1785495600,
+      "project": "proj_beta",
+      "usage": {
+        "prompt_tokens": 3000,
+        "completion_tokens": 1200,
+        "prompt_tokens_details": {"cached_tokens": 0},
+        "completion_tokens_details": {"reasoning_tokens": 5000}
+      }
+    },
+    {
+      "id": "emb_o3",
+      "model": "text-embedding-3-large",
+      "created": 1785499200,
+      "project": "proj_alpha",
+      "endpoint": "/v1/embeddings",
+      "usage": {
+        "prompt_tokens": 20000,
+        "total_tokens": 20000
+      }
+    },
+    {
+      "id": "img_o4",
+      "model": "gpt-4o",
+      "created": 1785502800,
+      "project": "proj_gamma",
+      "num_images": 3,
+      "usage": {
+        "prompt_tokens": 500,
+        "completion_tokens": 0
+      }
+    }
+  ]
+}

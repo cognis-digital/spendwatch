@@ -1,0 +1,42 @@
+{
+  "data": [
+    {
+      "model": "claude-sonnet-4-20250514",
+      "start_time": "2026-07-24T10:00:00Z",
+      "project_id": "proj_alpha",
+      "request_id": "req_a1",
+      "session_id": "sess_1",
+      "usage": {
+        "input_tokens": 12000,
+        "output_tokens": 3400,
+        "cache_read_input_tokens": 8000,
+        "cache_creation_input_tokens": 1500
+      }
+    },
+    {
+      "model": "claude-opus-4-20250514",
+      "start_time": "2026-07-24T11:30:00Z",
+      "project_id": "proj_beta",
+      "request_id": "req_a2",
+      "session_id": "sess_2",
+      "usage": {
+        "input_tokens": 5000,
+        "output_tokens": 9000,
+        "cache_read_input_tokens": 0,
+        "cache_creation_input_tokens": 0,
+        "reasoning_tokens": 2200
+      }
+    },
+    {
+      "model": "claude-3-5-haiku-20241022",
+      "start_time": "2026-07-24T12:15:00Z",
+      "project_id": "proj_alpha",
+      "request_id": "req_a3",
+      "usage": {
+        "input_tokens": 800,
+        "output_tokens": 240
+      },
+      "images": 2
+    }
+  ]
+}

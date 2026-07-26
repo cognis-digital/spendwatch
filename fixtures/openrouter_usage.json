@@ -1,0 +1,33 @@
+{
+  "data": [
+    {
+      "id": "gen_r1",
+      "model": "anthropic/claude-3.5-sonnet",
+      "created_at": "2026-07-24T09:45:00Z",
+      "app": "proj_alpha",
+      "tokens_prompt": 6000,
+      "tokens_completion": 1800,
+      "native_tokens_reasoning": 0,
+      "total_cost": 0.0450
+    },
+    {
+      "id": "gen_r2",
+      "model": "meta-llama/llama-3.1-70b-instruct",
+      "created_at": "2026-07-24T13:00:00Z",
+      "app": "proj_beta",
+      "tokens_prompt": 15000,
+      "tokens_completion": 5000,
+      "total_cost": 0.0060
+    },
+    {
+      "id": "gen_r3",
+      "model": "openai/gpt-4o",
+      "created_at": "2026-07-24T14:20:00Z",
+      "app": "proj_gamma",
+      "tokens_prompt": 2000,
+      "tokens_completion": 900,
+      "native_tokens_cached": 500,
+      "total_cost": 0.0140
+    }
+  ]
+}

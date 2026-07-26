@@ -1,3 +1,0 @@
-$ tokenmeter-emit --version
-
-tokenmeter 0.1.0

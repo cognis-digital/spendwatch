@@ -1,0 +1,30 @@
+{
+  "records": [
+    {
+      "model": "llama3.1:8b",
+      "created_at": "2026-07-24T08:00:00Z",
+      "runtime": "ollama",
+      "project": "proj_alpha",
+      "prompt_eval_count": 3200,
+      "eval_count": 1100
+    },
+    {
+      "model": "qwen2.5:14b",
+      "created_at": "2026-07-24T08:30:00Z",
+      "runtime": "ollama",
+      "project": "proj_beta",
+      "prompt_eval_count": 5000,
+      "eval_count": 2600
+    },
+    {
+      "model": "local-model",
+      "created": 1785484800,
+      "runtime": "lmstudio",
+      "project": "proj_alpha",
+      "usage": {
+        "prompt_tokens": 1500,
+        "completion_tokens": 700
+      }
+    }
+  ]
+}
